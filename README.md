@@ -9,7 +9,7 @@ suggestions are optional and **bring-your-own-key**: no built-in API, no account
 
 ## Current status
 
-**Phase 0 + Phase 1 implemented and verified** (scaffold, extension shell, contracts, settings/key storage, side-panel UI with consent UX, tests, quality gates — lint/typecheck/tests/build all green). Two runtime spike checks (T01/T02) still want a 2-minute manual pass after loading the unpacked build; see the plan's handoff checklist. The deterministic page scanner ships in Phase 2 — clicking **Analyze** reports that honestly rather than scanning.
+(scaffold, extension shell, contracts, settings/key storage, side-panel UI with consent UX, full BYOK AI enrichment pipeline, hardening tests, release security gate — lint/typecheck/49 tests/build/security-check all green). The deterministic page scanner ships in Phase 2, so the AI flow currently activates on findings supplied in memory (the wiring is complete). Runtime checks that need a manual pass are listed in the plan's handoff section. Clicking **Analyze** reports the scanner's absence honestly rather than scanning.
 
 ## Getting started
 
