@@ -1,1 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+.output/
+dist/
+stats.html
+
+# WXT generated types
+.wxt/
+
+# Test coverage
+coverage/
+
+# Local secrets / env — never commit
+.env
+.env.*
+*.local
+
+# Ephemeral test browser profiles
+.tmp-spike-profile/
+
+# User-managed docs folder (kept as the user configured it)
 /docs
