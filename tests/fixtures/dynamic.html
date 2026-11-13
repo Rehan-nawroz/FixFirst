@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head><title>Dynamic fixture page</title></head>
+  <body>
+    <h1>Dynamic content</h1>
+    <div id="late"></div>
+    <script>
+      setTimeout(function () {
+        var d = document.getElementById('late');
+        var b = document.createElement('button');
+        b.innerHTML = '🔍'; // icon-only button with no accessible name
+        d.appendChild(b);
+        var i = document.createElement('img');
+        i.src = 'late.jpg'; // image added without alt
+        d.appendChild(i);
+      }, 500);
+    </script>
+  </body>
+</html>
