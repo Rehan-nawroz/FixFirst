@@ -1,0 +1,207 @@
+/* FixFirst side panel — high-contrast, keyboard-first styling. */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --text: #1a202c;
+  --text-muted: #4a5568;
+  --border: #d9dee5;
+  --accent: #1d4ed8;
+  --accent-strong: #1e3a8a;
+  --danger: #b42318;
+  --success: #067647;
+  --focus: #1d4ed8;
+  font-size: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151a;
+    --surface: #1b2027;
+    --text: #e8ebef;
+    --text-muted: #a8b0ba;
+    --border: #343c46;
+    --accent: #7ba2f7;
+    --accent-strong: #a5c0fa;
+    --danger: #f2988d;
+    --success: #6fd5a4;
+    --focus: #a5c0fa;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.panel {
+  padding: 1rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.panel__header h1 {
+  margin: 0.25rem 0 0.25rem;
+  font-size: 1.35rem;
+}
+
+.panel__tagline {
+  margin: 0 0 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.panel__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.panel__meta p {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  min-height: 44px; /* touch target */
+}
+
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent-strong);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.btn--danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn--link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 0.25rem 0;
+  min-height: 32px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.status {
+  margin: 0.5rem 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.9rem;
+}
+
+.status--error {
+  border-color: var(--danger);
+}
+
+.status--success {
+  border-color: var(--success);
+}
+
+.settings {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.settings h2 {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.field {
+  margin: 0.75rem 0;
+  border: none;
+  padding: 0;
+}
+
+fieldset.field {
+  border: none;
+}
+
+.field label,
+.field legend {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.field input[type='url'],
+.field input[type='text'],
+.field input[type='password'] {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+  min-height: 44px;
+}
+
+.field__hint {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.field__row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.field__row input {
+  flex: 1 1 auto;
+}
+
+.choice {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  font-weight: 400;
+  font-size: 0.9rem;
+  margin: 0.35rem 0;
+}
+
+.choice input {
+  margin-top: 0.2rem;
+}
