@@ -1,7 +1,6 @@
 import type { ExtRequest } from '../types/messages';
 import type { ValidationResult } from './settings';
 import { LIMITS } from './limits';
-
 function requestIdOk(value: unknown): value is string {
   return typeof value === 'string' && value.length > 0 && value.length <= 128;
 }
@@ -32,6 +31,15 @@ export function validateExtRequest(input: unknown): ValidationResult<ExtRequest>
       return { ok: true, value: { type: 'CLEAR_API_KEY', requestId } };
     case 'SCAN_ACTIVE_TAB':
       return { ok: true, value: { type: 'SCAN_ACTIVE_TAB', requestId } };
+    case 'ENRICH_FINDINGS': {
+      if (!Array.isArray(raw.findings)) {
+        return { ok: false, error: 'ENRICH_FINDINGS requires a findings array.' };
+      }
+      if (raw.findings.length > LIMITS.scanFindingsMax) {
+        return { ok: false, error: 'ENRICH_FINDINGS has too many findings.' };
+      }
+      return { ok: true, value: { type: 'ENRICH_FINDINGS', requestId, findings: raw.findings } };
+    }
     case 'SAVE_SETTINGS': {
       const endpointRaw = raw.endpointUrl;
       const modelRaw = raw.modelId;
