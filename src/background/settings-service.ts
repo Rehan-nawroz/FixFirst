@@ -106,6 +106,21 @@ export class SettingsService {
     return this.sessionApiKey;
   }
 
+  /**
+   * Resolve the key to use for an AI request: session key first, then the
+   * explicit opt-in device key. Never called from the message boundary.
+   */
+  async resolveApiKey(): Promise<{ key: string; preference: KeyPreference } | null> {
+    if (this.sessionApiKey !== null) {
+      return { key: this.sessionApiKey, preference: 'session' };
+    }
+    const deviceKey = await this.store.loadDeviceApiKey();
+    if (deviceKey !== null) {
+      return { key: deviceKey, preference: 'device' };
+    }
+    return null;
+  }
+
   private async updateKeyPreference(preference: KeyPreference): Promise<void> {
     const current = await this.store.load();
     await this.store.save({ ...current, keyPreference: preference });
