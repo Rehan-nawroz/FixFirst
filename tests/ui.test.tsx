@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { App } from '../src/components/App';
 import { SettingsView } from '../src/components/SettingsView';
 import type { ExtClient } from '../src/shared/messaging/client';
@@ -37,22 +37,36 @@ describe('App (side panel shell)', () => {
     expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument();
   });
 
-  it('reports scanner unavailability instead of pretending to scan', async () => {
-    const { client } = fakeClient(() => ({
-      ok: false,
-      requestId: 'r',
-      error: {
-        code: 'SCANNER_UNAVAILABLE',
-        message: 'The local page scanner is not part of this build yet.',
+  it('renders validated findings returned by the scanner', async () => {
+    const scan = {
+      scanId: 'scan-1',
+      startedAt: new Date().toISOString(),
+      pageOrigin: 'https://example.test',
+      pageTitle: 'Example',
+      summary: {
+        counts: { critical: 1, serious: 0, moderate: 0, minor: 0, unknown: 0, needsReview: 0 },
+        needsReviewCount: 0,
       },
-    }));
+      findings: [
+        {
+          id: 'image-alt:0', ruleId: 'image-alt', impact: 'critical', category: 'images',
+          title: 'Images must have alternative text', summary: 'Missing alternative text',
+          wcagTags: ['wcag2a'], selector: 'img', snippet: '<img>', helpUrl: null, needsReview: false,
+        },
+      ],
+      incomplete: [],
+      engineVersion: '4.14.0',
+    };
+    const { client } = fakeClient((message) =>
+      message.type === 'SCAN_ACTIVE_TAB'
+        ? { ok: true, requestId: message.requestId, scan }
+        : { ok: true, requestId: message.requestId },
+    );
     render(<App client={client} />);
     fireEvent.click(screen.getByRole('button', { name: /analyze this page/i }));
-    const status = await screen.findByRole('status');
-    await waitFor(() => expect(status.textContent).toMatch(/Phase 2 of the build plan/i));
-    expect(client.request).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'SCAN_ACTIVE_TAB' }),
-    );
+    expect(await screen.findByText('Images must have alternative text')).toBeInTheDocument();
+    expect(await screen.findByRole('status')).toHaveTextContent(/Scan complete: 1 finding/i);
+    expect(client.request).toHaveBeenCalledWith(expect.objectContaining({ type: 'SCAN_ACTIVE_TAB' }));
   });
 
   it('opens settings with the Settings button', async () => {
