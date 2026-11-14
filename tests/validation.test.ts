@@ -72,6 +72,7 @@ describe('validateExtRequest', () => {
     expect(validateExtRequest(null).ok).toBe(false);
     expect(validateExtRequest({ type: 'NOPE', requestId: 'r' }).ok).toBe(false);
     expect(validateExtRequest({ type: 'PING' }).ok).toBe(false);
+    expect(validateExtRequest({ type: 'ENRICH_FINDINGS', requestId: 'r', findings: [] }).ok).toBe(true);
     expect(
       validateExtRequest({ type: 'SET_API_KEY', requestId: 'r', key: 'k', preference: 'disk' }).ok,
     ).toBe(false);
