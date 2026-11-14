@@ -1,14 +1,20 @@
 import type { ErrorCode, ExtRequest, ExtResponse } from '../shared/types/messages';
 import { validateExtRequest } from '../shared/validation/messages';
 import { ExtServiceError, type SettingsService } from './settings-service';
+import type { AiService } from './ai-service';
+import type { PageScannerService } from './page-scanner';
 
 /**
  * Central message router for the background service worker. Validates every
- * incoming message, dispatches to the settings service, and always answers
+ * incoming message, dispatches to the settings/AI services, and always answers
  * with a typed ExtResponse — including for scanner requests, which in this
  * build are explicitly "not shipped yet" rather than silently ignored.
  */
-export function createMessageRouter(service: SettingsService) {
+export function createMessageRouter(
+  service: SettingsService,
+  ai: AiService,
+  scanner: PageScannerService,
+) {
   return {
     async handle(message: ExtRequest): Promise<ExtResponse> {
       switch (message.type) {
@@ -38,13 +44,18 @@ export function createMessageRouter(service: SettingsService) {
             requestId: message.requestId,
             settings: await service.clearApiKey(),
           };
-        case 'SCAN_ACTIVE_TAB': {
-          void message;
-          throw new ExtServiceError(
-            'SCANNER_UNAVAILABLE',
-            'The local page scanner is not part of this build yet. It ships in Phase 2 of the build plan (tasks T11\u2013T19).',
-          );
-        }
+        case 'SCAN_ACTIVE_TAB':
+          return {
+            ok: true,
+            requestId: message.requestId,
+            scan: await scanner.scanActiveTab(),
+          };
+        case 'ENRICH_FINDINGS':
+          return {
+            ok: true,
+            requestId: message.requestId,
+            enrichments: await ai.enrichFindings(message.findings),
+          };
       }
     },
   };
