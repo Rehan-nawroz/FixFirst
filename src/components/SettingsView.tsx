@@ -4,6 +4,7 @@ import type { ExtClient } from '../shared/messaging/client';
 import { copyForError, type StatusState } from './status';
 import { StatusRegion } from './StatusRegion';
 import { newId } from '../shared/util';
+import { ensureEndpointPermission, describeEndpoint } from '../ai/origin';
 
 const CONSENT_TEXT =
   'Enabling AI analysis means FixFirst will send bounded evidence about detected issues ' +
@@ -76,7 +77,19 @@ export function SettingsView({
       });
       if (res.ok && 'settings' in res) {
         applySnapshot(res.settings);
-        setStatus({ tone: 'success', text: 'Settings saved on this device.' });
+        const endpoint = res.settings.endpointUrl;
+        let note = 'Settings saved on this device.';
+        if (endpoint !== null) {
+          const origin = describeEndpoint(endpoint);
+          const outcome = await ensureEndpointPermission(endpoint);
+          if (outcome === 'denied') {
+            setStatus({ tone: 'error', text: `Saved, but access to ${origin ?? 'the endpoint'} was not granted. AI requests to it will fail until you allow access.` });
+            return;
+          }
+          if (outcome === 'granted') note = `Settings saved. Access to ${origin ?? 'the endpoint'} granted for AI requests.`;
+          else if (outcome === 'not-needed') note = 'Settings saved. (Local http endpoints use CORS instead of a browser permission.)';
+        }
+        setStatus({ tone: 'success', text: note });
       } else {
         const err = res.ok ? null : res.error;
         setStatus({
